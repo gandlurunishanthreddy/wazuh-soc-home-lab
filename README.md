@@ -1,110 +1,214 @@
-# Wazuh SIEM Home Lab: Windows Endpoint Monitoring
+# Wazuh SOC Analyst Home Lab: Windows Endpoint Monitoring and Investigation
 
-A hands-on blue-team home lab built to practice endpoint monitoring,
-file integrity monitoring (FIM), and basic SOC alert validation using
-Wazuh.
+## Project Overview
 
-## Project overview
+A hands-on blue-team home lab built to develop practical SOC Analyst skills using Wazuh SIEM, Windows endpoint monitoring, Sysmon, and File Integrity Monitoring (FIM).
 
-This lab uses an Ubuntu virtual machine as the Wazuh manager and a
-Windows 11 host as the monitored endpoint. The Windows Wazuh agent sends
-telemetry to the manager, where alerts can be reviewed in the Wazuh
-dashboard.
+The project demonstrates SIEM deployment, endpoint integration, security event collection, process investigation, and Windows authentication monitoring.
 
-## Lab architecture
+## Lab Architecture
 
-  -----------------------------------------------------------------------
-  Component                           Role
-  ----------------------------------- -----------------------------------
-  Ubuntu 22.04 LTS VM                 Wazuh manager, Wazuh indexer, and
-                                      Wazuh dashboard
+| Component | Role |
+|---|---|
+| Ubuntu 22.04 LTS VM | Wazuh Manager, Indexer and Dashboard |
+| Windows 11 Host | Monitored endpoint running Wazuh Agent and Sysmon |
+| Oracle VirtualBox | Virtualization environment |
+| Wazuh | SIEM and security event analysis |
+| Microsoft Sysmon 15.22 | Detailed Windows process telemetry |
+| Networking | Host-Only networking for endpoint-to-manager communication |
 
-  Windows 11 host                     Monitored endpoint running the
-                                      Wazuh agent
+**Data flow:**
 
-  Oracle VirtualBox                   Hosts the Ubuntu virtual machine
+Windows 11 → Wazuh Agent → Ubuntu Wazuh Manager → Wazuh Indexer → Wazuh Dashboard
 
-  Network mode                        Bridged networking for
-                                      endpoint-to-manager communication
-  -----------------------------------------------------------------------
+IP addresses and credentials are intentionally excluded from this repository.
 
-**Data flow:** Windows 11 endpoint → Wazuh agent → Ubuntu Wazuh manager
-→ Wazuh dashboard.
+## Technologies Used
 
-> IP addresses are intentionally not published. The manager's bridged
-> address may change depending on the local network.
+- Wazuh 4.14.10
+- Ubuntu 22.04 LTS
+- Windows 11
+- Microsoft Sysmon 15.22
+- Oracle VirtualBox
+- Windows Event Viewer
+- Wazuh Dashboard and Discover
 
-## What I implemented
+## Implemented Features
 
--   Deployed the Wazuh manager, indexer, and dashboard on Ubuntu 22.04
-    LTS.
--   Installed the Wazuh agent on the Windows 11 host.
--   Registered the Windows endpoint with the Wazuh manager and confirmed
-    it appeared in the Wazuh environment.
--   Configured Windows File Integrity Monitoring for the test directory
-    `C:\Wazuh-Lab`.
--   Generated test activity by creating files, editing file contents,
-    and deleting files in the monitored directory.
--   Reviewed the resulting alerts in the Wazuh dashboard and verified
-    events for:
-    -   File added to the system (rule ID `554`)
-    -   File deleted (rule ID `553`)
-    -   Integrity checksum changed (rule ID `550`)
+### 1. Wazuh SIEM Deployment
 
-## Validation performed
+- Deployed Wazuh Manager, Indexer and Dashboard on Ubuntu 22.04.
+- Installed and registered the Wazuh Agent on Windows 11.
+- Configured agent-to-manager communication.
+- Verified endpoint connectivity and active agent status through the Wazuh Dashboard.
 
-1.  Created a test file inside `C:\Wazuh-Lab`.
-2.  Added and changed text in the file.
-3.  Deleted the file.
-4.  Repeated the test with additional files.
-5.  Opened the Wazuh dashboard and reviewed the corresponding endpoint
-    events.
+### 2. File Integrity Monitoring (FIM)
 
-The dashboard showed file-addition, file-deletion, and checksum-change
-alerts associated with the Windows endpoint.
+Configured File Integrity Monitoring for the Windows test directory:
 
-## Skills demonstrated
+`C:\Wazuh-Lab`
 
--   SIEM deployment and basic administration
--   Windows endpoint onboarding
--   Agent-to-manager connectivity
--   File Integrity Monitoring (FIM)
--   Basic alert validation and dashboard investigation
--   Linux virtual-machine administration
--   Basic understanding of security telemetry and event review
+Performed controlled file-system activities:
 
-## Repository structure
+- File creation
+- File modification
+- File deletion
 
-``` text
+Observed Wazuh FIM rule IDs:
+
+| Rule ID | Description |
+|---|---|
+| 554 | File added |
+| 550 | File modified |
+| 553 | File deleted |
+
+Verified the resulting events through the Wazuh Dashboard.
+
+### 3. Sysmon Integration and Process Monitoring
+
+Installed Microsoft Sysmon on the Windows endpoint and configured the Wazuh Agent to collect events from:
+
+`Microsoft-Windows-Sysmon/Operational`
+
+Investigated the following Sysmon events:
+
+| Event ID | Description |
+|---|---|
+| 1 | Process creation |
+| 5 | Process termination |
+
+Examined process telemetry, including:
+
+- Process names and executable paths
+- Process IDs and parent process IDs
+- Parent-child process relationships
+- User context
+- Command-line information where available
+
+### 4. Windows Process Investigation
+
+Performed controlled process execution tests and investigated the resulting Sysmon telemetry.
+
+Activities included:
+
+- PowerShell process execution
+- Notepad process creation
+- Parent-child process relationship analysis
+- Examination of executable paths and process information
+
+Identified a Notepad process launched by PowerShell during controlled testing.
+
+The reviewed activity was consistent with the test actions. No confirmed malicious execution was established.
+
+### 5. PowerShell Process Monitoring
+
+Investigated PowerShell execution through Sysmon process creation events.
+
+Examined:
+
+- PowerShell executable path
+- User context
+- Process ID
+- Parent process
+- Child process execution
+
+**Limitation:** PowerShell Script Block Logging (Windows Event ID 4104) was not configured or verified during this project. The investigation focused on process-level telemetry using Sysmon Event ID 1.
+
+### 6. Windows Authentication Monitoring
+
+Collected and investigated Windows Security Event Log records through Wazuh.
+
+| Event ID | Description |
+|---|---|
+| 4624 | Successful logon |
+| 4625 | Failed logon |
+
+Performed controlled authentication testing by entering an incorrect password.
+
+Investigated the resulting failed authentication events using:
+
+- Target username
+- Source IP address
+- Logon type
+- Authentication package
+- Failure status and substatus codes
+
+Observed three failed logon events during the controlled test.
+
+The events showed local interactive authentication failures consistent with the test activity.
+
+## Investigation Findings
+
+The project demonstrated the following:
+
+- Successful deployment and operation of a Wazuh SIEM environment.
+- Windows endpoint onboarding and telemetry collection.
+- Detection of file creation, modification and deletion.
+- Collection of Sysmon process creation and termination events.
+- Investigation of PowerShell and Notepad process execution.
+- Analysis of process relationships and user context.
+- Collection and investigation of successful and failed Windows logons.
+
+No confirmed malicious activity was established during the controlled investigations.
+
+## Skills Demonstrated
+
+- SIEM deployment and administration
+- Wazuh configuration
+- Windows endpoint monitoring
+- Sysmon integration
+- File Integrity Monitoring
+- Windows Security Event Log analysis
+- Process creation investigation
+- Parent-child process analysis
+- Authentication event investigation
+- Linux administration
+- Virtual machine networking
+- Security event analysis and documentation
+
+## Repository Structure
+
+```text
 wazuh-soc-home-lab/
+│
 ├── README.md
-├── .gitignore
+│
 ├── docs/
 │   └── architecture.md
+│
 └── evidence/
     └── README.md
 ```
 
-Screenshots can be added to `evidence/` after removing or obscuring
-passwords, tokens, private IP addresses, usernames, and other sensitive
-information.
+Additional investigation reports and screenshots will be organized in the `docs/` and `evidence/` directories.
 
-## Security and privacy
+## Limitations and Future Improvements
 
-This repository deliberately does not contain:
+- PowerShell Script Block Logging (Event ID 4104) was not verified.
+- A live brute-force attack simulation was not completed.
+- Custom Wazuh detection rules and automated response workflows were not implemented as part of this project.
 
--   Wazuh admin passwords or generated credentials
--   Agent authentication keys
--   Private keys, certificates, or keystores
--   Unredacted configuration files
--   Raw logs containing personal or sensitive system information
+Potential future improvements include:
 
-Do not commit secrets or credentials. If a credential has appeared in a
-screenshot or chat, rotate it before publishing the project.
+- Additional authentication attack investigations.
+- Custom detection-rule development.
+- PowerShell Script Block Logging.
+- Further endpoint threat detection scenarios.
 
-## Future improvements
+## Security and Privacy
 
-Potential extensions include Windows Security Event Log monitoring,
-PowerShell telemetry, additional detection scenarios, and documented
-incident investigations. These should be added only after they have been
-implemented and tested.
+This repository does not contain:
+
+- Wazuh administrator credentials.
+- Agent authentication keys.
+- Private keys or certificates.
+- Sensitive configuration files.
+- Unredacted logs containing personal information.
+
+All testing was conducted in a controlled educational lab environment using personally managed systems.
+
+## Conclusion
+
+This home lab provided practical experience deploying a SIEM platform, integrating Windows endpoint telemetry, monitoring file-system changes, and investigating process and authentication events.
+
+The project demonstrates foundational technical skills relevant to entry-level Security Operations Center (SOC) Analyst responsibilities.
