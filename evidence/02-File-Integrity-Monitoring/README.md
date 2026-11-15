@@ -1,0 +1,1 @@
+# File Integrity Monitoring Evidence\n\nOriginal FIM screenshots for file-added (rule 554), file-modified (rule 550), and file-deleted (rule 553) were not present among the images accessible in this chat runtime. Add the genuine original screenshots here if available.\n

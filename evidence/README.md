@@ -1,19 +1,18 @@
-# Evidence screenshots
+# Wazuh Project Evidence
 
-Add screenshots here that demonstrate:
+This folder contains genuine screenshots captured during the Wazuh home-lab work.
 
-1.  Wazuh dashboard showing the Windows endpoint.
-2.  FIM events showing a file added (rule 554).
-3.  FIM events showing a file deleted (rule 553).
-4.  FIM events showing an integrity checksum change (rule 550).
+## Included evidence
+- Wazuh Windows agent shown as Active.
+- Sysmon event collection in Wazuh Discover.
+- Sysmon process-creation investigation.
+- PowerShell process-creation investigation.
+- Windows failed-logon Event ID 4625 investigation.
 
-Before adding screenshots, crop or blur any passwords, API keys,
-authentication tokens, private IP addresses, personal usernames,
-browser-saved credentials, or unrelated personal information.
+## Evidence not included in this package
+The FIM screenshots (rule IDs 554, 550 and 553) and a distinct successful-logon Event ID 4624 screenshot were not available among the image files surfaced in this chat runtime. They have deliberately not been fabricated. Add the original screenshots if they are available locally.
 
-Suggested filenames:
+## Privacy
+Browser address-bar details and selected account-identifying fields have been blurred in copies prepared for public sharing. Review every image before publishing.
 
--   `wazuh-dashboard-agent.png`
--   `fim-file-added.png`
--   `fim-file-deleted.png`
--   `fim-checksum-changed.png`
+These screenshots document controlled lab activity. The failed logons were local interactive failures, not evidence of a remote brute-force attack.
